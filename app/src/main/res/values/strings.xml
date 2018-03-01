@@ -12,12 +12,14 @@
     <string name="label_error_text">Error</string>
 
     <string-array name="meal_list">
+        <item></item>
         <item>Breakfast</item>
         <item>Lunch</item>
         <item>Dinner</item>
     </string-array>
 
     <string-array name="sauce_list">
+        <item></item>
         <item>Honey garlic</item>
         <item>Sweet and chili</item>
 

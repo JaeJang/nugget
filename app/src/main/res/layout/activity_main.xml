@@ -76,4 +76,15 @@
         android:layout_marginBottom="18dp"
         android:text="@string/submit"/>
 
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/nugget_counter"
+        android:layout_alignBottom="@+id/nugget_counter"
+        android:layout_alignEnd="@+id/nugget_click"
+        android:layout_marginEnd="11dp"
+        android:text="←click this if you were wrong"
+        android:textSize="10sp"/>
+
 </RelativeLayout>

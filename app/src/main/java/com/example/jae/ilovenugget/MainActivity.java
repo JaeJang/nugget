@@ -49,5 +49,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        counter_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                --counter;
+                counter_view.setText(""+ counter);
+            }
+        });
     }
 }

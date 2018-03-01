@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,12 +15,19 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -28,11 +36,16 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
 
     private static TextView date;
     private static int _day, _month, _year;
-    private String meal_selected, sauce_selected;
     private TextView numOfNugget;
     private ImageButton dateSelect;
     private Spinner meal_spinner, sauce_spinner;
     private Button submit, button;
+    private DatabaseReference ref;
+    private SeekBar seekbar;
+    private CheckBox yes, no;
+
+    private String meal_selected, sauce_selected;
+    private static String date_selected;
     private int counter;
 
 
@@ -41,6 +54,8 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_info);
 
+        ref = FirebaseDatabase.getInstance().getReference();
+
         numOfNugget = findViewById(R.id.num_nugget);
         dateSelect = findViewById(R.id.date_select);
         date = findViewById(R.id.date);
@@ -48,7 +63,9 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
         sauce_spinner = findViewById(R.id.sauce_spinner);
         submit = findViewById(R.id.goToWeekly);
         button = findViewById(R.id.button);
-
+        seekbar = findViewById(R.id.seekbar_enjoyment);
+        yes = findViewById(R.id.checkbox_yes);
+        no = findViewById(R.id.checkbox_no);
 
 
         counter = getIntent().getIntExtra("num_nugget", 0);
@@ -67,15 +84,37 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
         if(v.getId() == R.id.date_select){
             DialogFragment newFragment = new DatePickerFragment();
             newFragment.show(getSupportFragmentManager(), "datePicker");
-        } else if(v.getId() == R.id.button){
-            printTotalNugget();
         } else if(v.getId() == R.id.goToWeekly){
             if(date.equals("")){
                 Toast.makeText(getApplicationContext(), "DATE DATE DATE DATE DATE", Toast.LENGTH_SHORT).show();
+            } else if(yes.isChecked() && no.isChecked()) {
+                Toast.makeText(getApplicationContext(), "REGRET OR WHAT?", Toast.LENGTH_SHORT).show();
+            } else if(!yes.isChecked() && !no.isChecked()){
+                Toast.makeText(getApplicationContext(), "REGRET OR WHAT?", Toast.LENGTH_SHORT).show();
+            } else if(meal_selected.equals("") || sauce_selected.equals("")){
+                Toast.makeText(getApplicationContext(), "DO COMPLETE!", Toast.LENGTH_SHORT).show();
             } else{
-                saveNuggetByDate();
-                Intent intent = new Intent(getApplicationContext(), weekly_page.class);
-                startActivity(intent);
+                NuggetData data = null;
+                data = yes.isChecked() ? new NuggetData(counter, date_selected,meal_selected, sauce_selected,seekbar.getProgress(), "yes")
+                        : new NuggetData(counter, date_selected,meal_selected, sauce_selected,seekbar.getProgress(), "no");
+                /*if(yes.isChecked()){
+                        data = new NuggetData(counter, date_selected,meal_selected, sauce_selected,seekbar.getProgress(), "yes");
+
+                } else if(no.isChecked()){
+                        data = new NuggetData(counter, date_selected,meal_selected, sauce_selected,seekbar.getProgress(), "no");
+                }*/
+                Log.d("nuggetTracker","" + data);
+                ref.child("record").push().setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(!task.isSuccessful()){
+                            Log.d("nuggetTracker","failed / " + task.getException());
+                        } else{
+                            Intent intent = new Intent(getApplicationContext(), monthly_page.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
             }
 
         }
@@ -101,10 +140,25 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
             _day = dayOfMonth; _month = month + 1; _year = year;
             //Log.d("nuggetTracker", "day: " + _day + " month: " + _month + " year: " + _year );
             date.setText(dayOfMonth + " / " + (month + 1)  + " / " + year);
+
+            if(_day < 10 && _month < 10){
+
+                date_selected = "0" + String.valueOf(_day) + "0" + String.valueOf(_month) + String.valueOf(_year);
+
+            } else if( _day < 10 && _month >=10) {
+                date_selected ="0" + String.valueOf(_day) + String.valueOf(_month) + String.valueOf(_year);
+
+            } else if(_day >= 10 && _month <10){
+                date_selected =String.valueOf(_day) + "0" + String.valueOf(_month) + String.valueOf(_year);
+
+            } else if(_day >=10 && _month >= 10){
+
+                date_selected =String.valueOf(_day) +String.valueOf(_month) + String.valueOf(_year);
+            }
         }
     }
 
-    private void setSpinner(int array, Spinner spinner){
+    private void setSpinner(int array, final Spinner spinner){
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 array, R.layout.spinner_item);
 
@@ -115,10 +169,12 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(view.getId() == R.id.meal_spinner)
+                if(spinner.getId() == R.id.meal_spinner){
                     meal_selected = parent.getItemAtPosition(position).toString();
-                else if(view.getId() == R.id.sauce_spinner)
+                }
+                else if(spinner.getId() == R.id.sauce_spinner){
                     sauce_selected = parent.getItemAtPosition(position).toString();
+                }
             }
 
             @Override
@@ -128,49 +184,7 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
         });
     }
 
-    private void saveNuggetByDate(){
-        String date = null;
-        if(_day < 10 && _month < 10){
 
-            date = "0" + String.valueOf(_day) + "0" + String.valueOf(_month) + String.valueOf(_year);
 
-        } else if( _day < 10 && _month >=10) {
-            date ="0" + String.valueOf(_day) + String.valueOf(_month) + String.valueOf(_year);
 
-        } else if(_day >= 10 && _month <10){
-            date =String.valueOf(_day) + "0" + String.valueOf(_month) + String.valueOf(_year);
-
-        } else if(_day >=10 && _month >= 10){
-
-            date =String.valueOf(_day) +String.valueOf(_month) + String.valueOf(_year);
-        }
-        Log.d("nuggetTracker", "date: " + date);
-        SharedPreferences save = getSharedPreferences("date", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor saveEditor = save.edit();
-        int temp;
-        if((temp = save.getInt(date, 0)) != 0){
-            counter += temp;
-        }
-        saveEditor.putInt(date, counter);
-        saveEditor.commit();
-        Log.d("nuggetTracker", "saved: " + save.getInt(date, 0));
-    }
-
-    private void printTotalNugget(){
-        SharedPreferences load = getSharedPreferences("date", Activity.MODE_PRIVATE);
-        Map<String, ?> all = load.getAll();
-
-        int total = 0;
-
-        for(Map.Entry<String, ?> entry : all.entrySet()){
-            Log.d("nuggetTracker", entry.getKey() + " : " + entry.getValue().toString());
-            total += Integer.parseInt(entry.getValue().toString());
-        }
-        Log.d("nuggetTracker", "total: "+total);
-
-        SharedPreferences.Editor editor = load.edit();
-        editor.clear();
-
-        editor.commit();
-    }
 }

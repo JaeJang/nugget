@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.example.jae.ilovenugget">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,7 +19,7 @@
         </activity>
         <activity android:name=".detail_info">
         </activity>
-        <activity android:name=".weekly_page">
+        <activity android:name=".monthly_page">
         </activity>
     </application>
 
