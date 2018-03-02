@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1021051915065",
+    "firebase_url": "https://nuggettracker-fb85d.firebaseio.com",
+    "project_id": "nuggettracker-fb85d",
+    "storage_bucket": "nuggettracker-fb85d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021051915065:android:27db84ccdf102a36",
+        "android_client_info": {
+          "package_name": "com.example.jae.ilovenugget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021051915065-urckie484h581mf61tpt758r17uf5htk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdQnAm37m5_IWBVXDz8X-cMrVHmAvTS50"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
