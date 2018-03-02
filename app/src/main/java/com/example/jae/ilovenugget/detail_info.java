@@ -62,7 +62,6 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
         meal_spinner = findViewById(R.id.meal_spinner);
         sauce_spinner = findViewById(R.id.sauce_spinner);
         submit = findViewById(R.id.goToWeekly);
-        button = findViewById(R.id.button);
         seekbar = findViewById(R.id.seekbar_enjoyment);
         yes = findViewById(R.id.checkbox_yes);
         no = findViewById(R.id.checkbox_no);
@@ -74,7 +73,6 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
 
         dateSelect.setOnClickListener(this);
         submit.setOnClickListener(this);
-        button.setOnClickListener(this);
 
         setSpinner(R.array.meal_list, meal_spinner);
         setSpinner(R.array.sauce_list, sauce_spinner);

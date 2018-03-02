@@ -3,6 +3,7 @@
           package="com.example.jae.ilovenugget">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -20,6 +21,10 @@
         <activity android:name=".detail_info">
         </activity>
         <activity android:name=".monthly_page">
+        </activity>
+        <activity android:name=".List_page">
+        </activity>
+        <activity android:name=".Achievement">
         </activity>
     </application>
 

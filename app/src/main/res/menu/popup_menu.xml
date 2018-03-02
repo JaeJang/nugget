@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/popupNugget"
+        android:title="@string/popupNugget" />
+    <item
+        android:id="@+id/popupGraphs"
+        android:title="@string/popupGraphs" />
+    <item
+        android:id="@+id/popupList"
+        android:title="@string/popupList" />
+    <item
+        android:id="@+id/popupAchievements"
+        android:title="@string/popupAchievements" />
+</menu>

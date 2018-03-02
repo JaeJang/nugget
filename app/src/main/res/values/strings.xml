@@ -10,18 +10,30 @@
     <string name="meal">Meal</string>
 
     <string name="label_error_text">Error</string>
+    <string name="popupNugget">Nugget</string>
+    <string name="popupGraphs">Graphs</string>
+    <string name="popupAchievements">Achievements</string>
+    <string name="popupList">List</string>
+    <string name="_0_lifetime_nuggets">0 lifetime Nuggets</string>
+    <string name="_0_calories_earned">0 calories earned</string>
+    <string name="_0_365_days">0/365 days</string>
+    <string name="_0_spent">$0 spent</string>
 
     <string-array name="meal_list">
         <item></item>
         <item>Breakfast</item>
         <item>Lunch</item>
         <item>Dinner</item>
+        <item>Snack</item>
     </string-array>
 
     <string-array name="sauce_list">
         <item></item>
         <item>Honey garlic</item>
         <item>Sweet and chili</item>
+        <item>Spicy Buffalo</item>
+        <item>Honey Mustard</item>
+        <item>Creamy Ranch</item>
 
     </string-array>
 </resources>

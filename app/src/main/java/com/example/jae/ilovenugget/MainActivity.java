@@ -3,6 +3,9 @@ package com.example.jae.ilovenugget;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatCheckBox;
+import android.support.v7.widget.PopupMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -13,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button submit;
     private TextView counter_view;
-    private ImageButton nugget;
+    private ImageButton nugget, popUpBtn;
     private int counter;
 
     @Override
@@ -56,6 +59,41 @@ public class MainActivity extends AppCompatActivity {
                 --counter;
                 counter_view.setText(""+ counter);
             }
+        });
+
+        popUpBtn = findViewById(R.id.menu);
+        popUpBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                final PopupMenu mainPopUp = new PopupMenu(MainActivity.this, popUpBtn);
+                mainPopUp.getMenuInflater().inflate(R.menu.popup_menu, mainPopUp.getMenu());
+
+                mainPopUp.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        if(menuItem.getTitle().equals("Nugget")) {
+                            return false;
+                        } else if (menuItem.getTitle().equals("Graphs")) {
+                            Intent intent = new Intent(getApplicationContext(), monthly_page.class);
+                            startActivity(intent);
+                            return true;
+                        } else if (menuItem.getTitle().equals("List")) {
+                            Intent intent = new Intent(getApplicationContext(), List_page.class);
+                            startActivity(intent);
+                            return true;
+                        }else if (menuItem.getTitle().equals("Achievements")) {
+                            Intent intent = new Intent(getApplicationContext(), Achievement.class);
+                            startActivity(intent);
+                            return true;
+                        } else
+                            return false;
+                    }
+                });
+
+                mainPopUp.show();
+
+            }
+
+
         });
     }
 }

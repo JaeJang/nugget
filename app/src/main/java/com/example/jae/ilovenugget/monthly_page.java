@@ -1,10 +1,15 @@
 package com.example.jae.ilovenugget;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -31,6 +36,7 @@ public class monthly_page extends AppCompatActivity {
 
 
     private TextView totalNuggets;
+    private ImageButton menu;
     private int m1, m2, m3, m4, m5, m6, m7, m8, m9 ,m10, m11, m12, total;
     private BarChart barChart;
     private DatabaseReference database;
@@ -40,42 +46,40 @@ public class monthly_page extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monthly_page);
-        //graph = findViewById(R.id.graph);
         database = FirebaseDatabase.getInstance().getReference();
         barChart = findViewById(R.id.graph);
         totalNuggets = findViewById(R.id.totalNuggets);
-        /*ref.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                NuggetData data = dataSnapshot.getValue(NuggetData.class);
-                Log.d("nuggetTracker", "" + data);
-                mSnapshotList.add(dataSnapshot.getValue(NuggetData.class));
-                String month = data.getDate().substring(2,4);
-                int nugget = data.getNumOfNugget();
-                countNuggetByMonth(Integer.parseInt(month), nugget);
+        menu = findViewById(R.id.menu3);
+
+        menu.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                final PopupMenu mainPopUp = new PopupMenu(monthly_page.this, menu);
+                mainPopUp.getMenuInflater().inflate(R.menu.popup_menu, mainPopUp.getMenu());
+
+                mainPopUp.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        if(menuItem.getTitle().equals("Nugget")) {
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                            return true;
+                        } else if (menuItem.getTitle().equals("Graphs")) {
+                            return false;
+                        } else if (menuItem.getTitle().equals("List")) {
+                            Intent intent = new Intent(getApplicationContext(), List_page.class);
+                            startActivity(intent);
+                            return true;
+                        } else if (menuItem.getTitle().equals("Achievements")) {
+                            Intent intent = new Intent(getApplicationContext(), Achievement.class);
+                            startActivity(intent);
+                            return true;
+                        } else
+                            return false;
+                    }
+                });
+                mainPopUp.show();
             }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-        //Log.d("nuggetTracker", ""+ mSnapshotList.size());
+        });
     }
 
     protected void onStart(){
@@ -90,7 +94,6 @@ public class monthly_page extends AppCompatActivity {
 
                 for(DataSnapshot snap : dataSnapshot.getChildren()){
                     NuggetData data = snap.getValue(NuggetData.class);
-                    Log.d("nuggetTracker", "" + data);
                     String month = data.getDate().substring(2,4);
                     int nugget = data.getNumOfNugget();
                     countNuggetByMonth(Integer.parseInt(month), nugget);
@@ -110,12 +113,11 @@ public class monthly_page extends AppCompatActivity {
                 barEntries.add(new BarEntry(11, m11));
                 barEntries.add(new BarEntry(12, m12));
 
-                BarDataSet barDataSet = new BarDataSet(barEntries, "Dates");
-
+                BarDataSet barDataSet = new BarDataSet(barEntries, "Nuggets");
 
                 BarData theData = new BarData(barDataSet);
 
-                final String[] dates = new String[] {" ","JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
+                final String[] dates = new String[]{" ", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
                 IAxisValueFormatter formatter = new IAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value, AxisBase axis) {
@@ -123,11 +125,12 @@ public class monthly_page extends AppCompatActivity {
                     }
 
                 };
+
                 XAxis xAxis = barChart.getXAxis();
                 xAxis.setGranularity(1f);
                 xAxis.setValueFormatter(formatter);
-                barChart.setData(theData);
 
+                barChart.setData(theData);
                 barChart.setTouchEnabled(true);
                 barChart.setAutoScaleMinMaxEnabled(true);
 
