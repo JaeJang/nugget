@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         submit = findViewById(R.id.submit_button);
         counter_view = findViewById(R.id.nugget_counter);
         nugget = findViewById(R.id.nugget_click);
+        popUpBtn = findViewById(R.id.menu);
 
         //Set click listener to the nugget button
         nugget.setOnClickListener(new View.OnClickListener(){
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Set click listener to the view
+        //It decrements the counter number
         counter_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        popUpBtn = findViewById(R.id.menu);
+
+        //Hamburger Menu
         popUpBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final PopupMenu mainPopUp = new PopupMenu(MainActivity.this, popUpBtn);
@@ -71,16 +75,20 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         if(menuItem.getTitle().equals("Nugget")) {
+                            //do nothing
                             return false;
                         } else if (menuItem.getTitle().equals("Graphs")) {
+                            //goes to Graph page
                             Intent intent = new Intent(getApplicationContext(), monthly_page.class);
                             startActivity(intent);
                             return true;
                         } else if (menuItem.getTitle().equals("List")) {
+                            //goes to List page
                             Intent intent = new Intent(getApplicationContext(), List_page.class);
                             startActivity(intent);
                             return true;
                         }else if (menuItem.getTitle().equals("Achievements")) {
+                            //goes to Achievement page
                             Intent intent = new Intent(getApplicationContext(), Achievement.class);
                             startActivity(intent);
                             return true;

@@ -42,6 +42,7 @@ public class Achievement extends AppCompatActivity {
         achieve4 = findViewById(R.id.achieve4);
         menu = findViewById(R.id.menu4);
 
+
         ref = FirebaseDatabase.getInstance().getReference().child("record");
 
         menu.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +82,6 @@ public class Achievement extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot snap : dataSnapshot.getChildren()){
                     list.add(snap.getValue(NuggetData.class));
-                    Log.d("nuggetTracker",snap.getValue(NuggetData.class)+"1");
                 }
 
                 int total = getTotalNuggets(list);
@@ -90,7 +90,7 @@ public class Achievement extends AppCompatActivity {
                 double money = total * 0.65;
 
                 DecimalFormat fmt = new DecimalFormat(".##");
-                Log.d("nuggetTracker", "total: " +total);
+
                 achieve1.setText(total + " Lifetime Nuggets");
                 achieve2.setText(calories + " calories earned");
                 achieve3.setText(days + "/365 days this year");
@@ -104,6 +104,12 @@ public class Achievement extends AppCompatActivity {
 
     }
 
+    /**
+     * Return total number of nuggets in Database.
+     *
+     * @param list an ArrayList of NuggetData class
+     * @return total  (int)number of nuggets
+     */
     private int getTotalNuggets(ArrayList<NuggetData> list){
         int total = 0;
         for(NuggetData data : list){
@@ -112,8 +118,14 @@ public class Achievement extends AppCompatActivity {
         return total;
     }
 
+    /**
+     * Get the days they had nuggets for current year
+     *
+     * @param list an ArrayList of NuggetData
+     * @return (int) the number of days
+     */
     private int getDays(ArrayList<NuggetData> list){
-        int days = 0;
+
         String currentYear = "" + Calendar.getInstance().get(Calendar.YEAR);
         HashMap<String,Integer> differentDays = new HashMap<>();
         for(NuggetData data : list){

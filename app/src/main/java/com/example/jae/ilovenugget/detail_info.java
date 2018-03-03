@@ -1,11 +1,9 @@
 package com.example.jae.ilovenugget;
 
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -30,7 +27,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
-import java.util.Map;
 
 public class detail_info extends AppCompatActivity implements View.OnClickListener {
 
@@ -39,7 +35,7 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
     private TextView numOfNugget;
     private ImageButton dateSelect;
     private Spinner meal_spinner, sauce_spinner;
-    private Button submit, button;
+    private Button submit;
     private DatabaseReference ref;
     private SeekBar seekbar;
     private CheckBox yes, no;
@@ -66,9 +62,9 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
         yes = findViewById(R.id.checkbox_yes);
         no = findViewById(R.id.checkbox_no);
 
-
+        //Get the number of nuggets clicked from the first page
+        //and print it to the screen
         counter = getIntent().getIntExtra("num_nugget", 0);
-
         numOfNugget.setText("" + counter);
 
         dateSelect.setOnClickListener(this);
@@ -79,40 +75,50 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
     }
 
     public void onClick(View v){
-        if(v.getId() == R.id.date_select){
+        if(v.getId() == R.id.date_select)
+        {
             DialogFragment newFragment = new DatePickerFragment();
             newFragment.show(getSupportFragmentManager(), "datePicker");
-        } else if(v.getId() == R.id.goToWeekly){
-            if(date.equals("")){
-                Toast.makeText(getApplicationContext(), "DATE DATE DATE DATE DATE", Toast.LENGTH_SHORT).show();
-            } else if(yes.isChecked() && no.isChecked()) {
-                Toast.makeText(getApplicationContext(), "REGRET OR WHAT?", Toast.LENGTH_SHORT).show();
-            } else if(!yes.isChecked() && !no.isChecked()){
-                Toast.makeText(getApplicationContext(), "REGRET OR WHAT?", Toast.LENGTH_SHORT).show();
-            } else if(meal_selected.equals("") || sauce_selected.equals("")){
-                Toast.makeText(getApplicationContext(), "DO COMPLETE!", Toast.LENGTH_SHORT).show();
-            } else{
-                NuggetData data = null;
-                data = yes.isChecked() ? new NuggetData(counter, date_selected,meal_selected, sauce_selected,seekbar.getProgress(), "yes")
-                        : new NuggetData(counter, date_selected,meal_selected, sauce_selected,seekbar.getProgress(), "no");
-                /*if(yes.isChecked()){
-                        data = new NuggetData(counter, date_selected,meal_selected, sauce_selected,seekbar.getProgress(), "yes");
+        }
 
-                } else if(no.isChecked()){
-                        data = new NuggetData(counter, date_selected,meal_selected, sauce_selected,seekbar.getProgress(), "no");
-                }*/
-                Log.d("nuggetTracker","" + data);
-                ref.child("record").push().setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(!task.isSuccessful()){
-                            Log.d("nuggetTracker","failed / " + task.getException());
-                        } else{
-                            Intent intent = new Intent(getApplicationContext(), monthly_page.class);
-                            startActivity(intent);
+        else if(v.getId() == R.id.goToWeekly)
+        {
+            if(date.equals("")){
+
+                //if date is not selected
+                Toast.makeText(getApplicationContext(), "DATE DATE DATE DATE DATE", Toast.LENGTH_SHORT).show();
+            } else if (yes.isChecked() && no.isChecked()) {
+
+                //if yes and no for Regret are both selected
+                Toast.makeText(getApplicationContext(), "REGRET OR WHAT?", Toast.LENGTH_SHORT).show();
+            } else {
+                if (!yes.isChecked() && !no.isChecked()) {
+
+                    //if both are not selected
+                    Toast.makeText(getApplicationContext(), "REGRET OR WHAT?", Toast.LENGTH_SHORT).show();
+                } else if (meal_selected.equals("") || sauce_selected.equals("")) {
+
+                    //if meal or sauce is not selected
+                    Toast.makeText(getApplicationContext(), "DO COMPLETE!", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    //if all fields are filled, make a NuggetData object and push it to the Database
+                    NuggetData data = null;
+                    data = yes.isChecked() ? new NuggetData(counter, date_selected, meal_selected, sauce_selected, seekbar.getProgress(), "yes")
+                            : new NuggetData(counter, date_selected, meal_selected, sauce_selected, seekbar.getProgress(), "no");
+
+                    ref.child("record").push().setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (!task.isSuccessful()) {
+                                Log.d("nuggetTracker", "failed / " + task.getException());
+                            } else {
+                                Intent intent = new Intent(getApplicationContext(), monthly_page.class);
+                                startActivity(intent);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
 
         }
@@ -136,9 +142,10 @@ public class detail_info extends AppCompatActivity implements View.OnClickListen
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
             _day = dayOfMonth; _month = month + 1; _year = year;
-            //Log.d("nuggetTracker", "day: " + _day + " month: " + _month + " year: " + _year );
+
             date.setText(dayOfMonth + " / " + (month + 1)  + " / " + year);
 
+            //Statements below make a format for date string with 8 length
             if(_day < 10 && _month < 10){
 
                 date_selected = "0" + String.valueOf(_day) + "0" + String.valueOf(_month) + String.valueOf(_year);
